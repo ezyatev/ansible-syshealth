@@ -1,0 +1,9 @@
+---
+- hosts: all
+
+  tasks:
+    - shell: "df -i /home/ | head -n2 | tail -n1 | tr -s ' ' | cut -d' ' -f5 | sed 's/%//'"
+      register: inodes_used_percents
+    - fail:
+        msg: "Whoops! Looks like a Linux system is running out of available inodes"
+      when: inodes_used_percents.stdout|int >= 90
